@@ -1,0 +1,40 @@
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumBGPPeeringPolicy
+metadata:
+  name: bgp-peering-policy
+spec:
+  nodeSelector:
+    matchLabels:
+      node.kubernetes.io/instance-type: "k8s-node"
+  virtualRouters:
+  - localASN: 64512
+    exportPodCIDR: true
+    neighbors:
+    - peerAddress: "192.168.1.1/32"
+      peerASN: 65001
+    - peerAddress: "192.168.2.1/32"
+      peerASN: 65002
+---
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "blue-pool"
+spec:
+  cidrs:
+  - cidr: "10.100.1.0/24"
+---
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumBGPAdvertisement
+metadata:
+  name: bgp-advertisements
+spec:
+  advertisements:
+  - advertisementType: "Service"
+    service:
+      addresses:
+      - ExternalIP
+      - LoadBalancerIP
+    selector:
+      matchLabels:
+        advertise: "bgp"
+  - advertisementType: "PodCIDR"

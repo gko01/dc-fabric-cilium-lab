@@ -1,0 +1,57 @@
+# Containerlab generated files
+.*.bak
+*.log
+clab-*
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Kubernetes temporary files
+kubeconfig
+*.kubeconfig
+join-command.sh
+
+# Docker
+.dockerignore
+
+# Lab runtime files
+logs/
+*.pid
+
+# Backup files
+*.backup
+*.bak
+
+# Certificate files (if any get generated)
+*.crt
+*.key
+*.pem
+
+# Python cache (if any Python scripts are added)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Node modules (if any Node.js tools are added)
+node_modules/
+
+# Environment files
+.env
+.env.local

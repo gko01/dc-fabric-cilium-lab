@@ -1,0 +1,60 @@
+name: dc-fabric-cilium
+
+topology:
+  kinds:
+    nokia_srlinux:
+      image: ghcr.io/nokia/srlinux:23.10.1
+    linux:
+      image: ghcr.io/hellt/network-multitool
+
+  nodes:
+    # Spine Switch (Route Reflector)
+    spine1:
+      kind: nokia_srlinux
+      startup-config: configs/spine/spine1.cfg
+      mgmt-ipv4: 172.21.21.10
+
+    # Leaf Switches (VXLAN VTEPs)
+    leaf1:
+      kind: nokia_srlinux
+      startup-config: configs/leaf/leaf1.cfg
+      mgmt-ipv4: 172.21.21.11
+
+    leaf2:
+      kind: nokia_srlinux
+      startup-config: configs/leaf/leaf2.cfg
+      mgmt-ipv4: 172.21.21.12
+
+    # Host nodes for Kubernetes cluster
+    host1:
+      kind: linux
+      image: ghcr.io/hellt/network-multitool
+      mgmt-ipv4: 172.21.21.21
+      binds:
+        - configs/hosts/host1.sh:/tmp/host1.sh
+        - k8s/:/tmp/k8s/
+      exec:
+        - bash /tmp/host1.sh
+
+    host2:
+      kind: linux
+      image: ghcr.io/hellt/network-multitool
+      mgmt-ipv4: 172.21.21.22
+      binds:
+        - configs/hosts/host2.sh:/tmp/host2.sh
+        - k8s/:/tmp/k8s/
+      exec:
+        - bash /tmp/host2.sh
+
+  links:
+    # Spine to Leaf connections
+    - endpoints: ["spine1:ethernet-1/1", "leaf1:ethernet-1/1"]
+    - endpoints: ["spine1:ethernet-1/2", "leaf2:ethernet-1/1"]
+    
+    # Leaf to Host connections
+    - endpoints: ["leaf1:ethernet-1/2", "host1:eth1"]
+    - endpoints: ["leaf2:ethernet-1/2", "host2:eth1"]
+
+mgmt:
+  network: clab-dc-fabric
+  ipv4-subnet: 172.21.21.0/24
