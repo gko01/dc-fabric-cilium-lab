@@ -6,9 +6,9 @@ set -e
 echo "Configuring Host2 as Kubernetes Worker Node..."
 
 # Configure network interface
-ip addr add 192.168.2.10/24 dev eth1
+ip addr show eth1 | grep -q "192.168.2.10/24" || ip addr add 192.168.2.10/24 dev eth1
 ip link set eth1 up
-ip route add default via 192.168.2.1
+ip route show | grep -q "default via 192.168.2.1" || ip route add default via 192.168.2.1
 
 # Configure hostname
 echo "host2" > /etc/hostname
